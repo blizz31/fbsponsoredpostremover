@@ -1,4 +1,4 @@
-const adKeywords = [
+var adKeywords = [
   "buy",
   "sale",
   "limited time",
@@ -173,38 +173,28 @@ const adKeywords = [
 ];
 
 var consoleLogging;
+var threshold = 0.01; // This will be changed if user has set a custom threshold in options
 
-
+// apply is called at every interval specific in the setTimeout below.
 function apply() {
 	
-
-
-	// Get all <use> elements in the DOM
+	// <use> elements have been found to be unique to posts on the feed. We leverage this as a foundation to scanning each post.
 	const useElements = document.querySelectorAll('use');
-
-	// Loop through each <use> element
 	useElements.forEach((useElement) => {
-	  // Get the 15th parent node of the <use> element
 	  let parent = useElement.parentNode;
+	  // At the time of writing, about 15 parent nodes upward will give us a node which contains the innerHTML 
+	  // of the entire post (whether it be a sponsored post or not)
 	  for (let i = 0; i < 15; i++) {
 		parent = parent.parentNode;
 		if (!parent) {
 		  break;
 		}
 	  }
-
- 	  if (parent && parent.nextSibling) {
-		var str = "";
-		const sibling = parent.nextSibling;
-		if (sibling.firstChild) {
-			str =  stripString(sibling.firstChild.lastChild.innerHTML);		
-		}
-		else if (sibling.lastChild) {
-
-			str =  stripString(sibling.lastChild.innerHTML);
-		}
-		
-		if (isAdvertisement(str, 0.01)) {
+ 	  if (parent) {
+		// Strip the HTML tags from the innerHTML to give us a rough string of the Text components of the post.
+		var str = stripString(parent.innerHTML);
+		// Run the text through the comparison algorithm to see if it is considered a sponsored post and if so, remove it.
+		if (isAdvertisement(str, threshold)) {
 			if (consoleLogging) {
 				console.log("[Facebook Sponsored post remover] Removed post: " + str);
 			}
@@ -219,6 +209,19 @@ let storageItem = browser.storage.local.get('FARConsoleLogging');
 storageItem.then((res) => {
 consoleLogging = res.FARConsoleLogging;
 });
+
+browser.storage.local.get("keywordsArray", function(result) {
+  if (result.keywordsArray !== undefined) {
+    adKeywords = result.keywordsArray;
+  } 
+});
+
+browser.storage.local.get("threshold", function(result) {
+  if (result.threshold !== undefined) {
+    threshold = result.threshold;
+  } 
+});
+
   apply();
   setInterval(apply, 2500);
 }, 5000);
@@ -243,6 +246,7 @@ Note that this approach has limitations and may produce false positives or false
 */
 
 function isAdvertisement(inputString, threshold) {
+  // hard coded match for the ® symbol. I can't think of a reason why a regular post would contain one, can you? 
   if (inputString.includes("®")) {
 	  return true;
   }
