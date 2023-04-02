@@ -184,21 +184,21 @@ function apply() {
 	  let parent = useElement.parentNode;
 	  // At the time of writing, about 15 parent nodes upward will give us a node which contains the innerHTML 
 	  // of the entire post (whether it be a sponsored post or not)
-	  for (let i = 0; i < 15; i++) {
+	  for (let i = 0; i < 16; i++) {
 		parent = parent.parentNode;
 		if (!parent) {
 		  break;
 		}
 	  }
- 	  if (parent) {
+ 	  if (parent && parent.firstChild.nextSibling && parent.firstChild.nextSibling.nextSibling) {
 		// Strip the HTML tags from the innerHTML to give us a rough string of the Text components of the post.
-		var str = stripString(parent.innerHTML);
+		var str = stripString(parent.firstChild.nextSibling.nextSibling.innerHTML);
 		// Run the text through the comparison algorithm to see if it is considered a sponsored post and if so, remove it.
 		if (isAdvertisement(str, threshold)) {
 			if (consoleLogging) {
 				console.log("[Facebook Sponsored post remover] Removed post: " + str);
 			}
-			parent.parentNode.parentNode.removeChild(parent.parentNode);	
+			parent.parentNode.removeChild(parent);	
 		}
 	  }  
 	});
