@@ -184,7 +184,7 @@ function apply() {
 	  let parent = useElement.parentNode;
 	  // At the time of writing, about 15 parent nodes upward will give us a node which contains the innerHTML 
 	  // of the entire post (whether it be a sponsored post or not)
-	  for (let i = 0; i < 16; i++) {
+	  for (let i = 0; i < 15; i++) {
 		parent = parent.parentNode;
 		if (!parent) {
 		  break;
