@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+  </head>
+
+  <body style="margin:10px;">
+<form id="form">
+  <p id=form-prompt><strong>Console logging</strong></p>
+  <p>Having this enabled will allow you to see which posts are being removed from the feed (ctrl+shift+k to open console)</p>
+  <input type="radio" id="ConsoleLoggingYes" name="consoleloggingradio" value="enabled">
+  <label for="child">Enable</label><br>
+  <input type="radio" id="ConsoleLoggingNo" name="consoleloggingradio" value="disabled">
+  <label for="adult">Disabled</label><br>
+  <br/>
+	
+  <label for="keywordsarea"><strong>Sponsored post keywords (comma separate) (case insensitive):</strong></label></p>
+  <textarea id="keywordsarea" name="keywordsarea" rows="4" cols="50"></textarea>
+  
+  <br/>
+  <p>The Threshold value is used to determine the minimum frequency of ad-related keywords that a post must contain in order to be considered an advertisement.</p>
+  <label for="threshold"><strong>Threshold value:</strong></label>
+  <input id="threshold" step="0.01" type="number" id="threshold" name="threshold"
+       min="0" max="1">
+  
+  <br/><br/>
+  <div><button type="submit">Save</button></div><br/>
+  <div><button id="restoredef">Restore defaults</button></div>
+</form>
+    <script src="options.js"></script>
+  </body>
+</html>
