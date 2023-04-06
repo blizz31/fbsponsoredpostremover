@@ -225,24 +225,51 @@ function apply() {
 	  let parent = useElement.parentNode;
 	  // At the time of writing, about 15 parent nodes upward will give us a node which contains the innerHTML 
 	  // of the entire post (whether it be a sponsored post or not)
-	  for (let i = 0; i < 16; i++) {
+	  for (let i = 0; i < 15; i++) {
 		parent = parent.parentNode;
 		if (!parent) {
 		  break;
 		}
 	  }
- 	  if (parent && parent.firstChild.nextSibling && parent.firstChild.nextSibling.nextSibling) {
+	    parent = findParentWithFourDivs(parent);
 		// Strip the HTML tags from the innerHTML to give us a rough string of the Text components of the post.
-		var str = stripString(parent.firstChild.nextSibling.nextSibling.innerHTML);
-		// Run the text through the comparison algorithm to see if it is considered a sponsored post and if so, remove it.
-		if (isAdvertisement(str, threshold)) {
-			if (consoleLogging) {
-				console.log("[Facebook Sponsored post remover] Removed post: " + str);
-			}
-			parent.parentNode.removeChild(parent);	
+		if(parent && parent.firstChild.nextSibling.nextSibling) {
+			var str = stripString(parent.firstChild.nextSibling.nextSibling.innerHTML);
+			// Run the text through the comparison algorithm to see if it is considered a sponsored post and if so, remove it.
+			if (isAdvertisement(str, threshold)) {
+				if (consoleLogging && parent.parentNode) {
+					parent.parentNode.removeChild(parent);
+					console.log("[Facebook Sponsored post remover] Removed post: " + str);
+				}
+			}			
 		}
-	  }  
 	});
+}
+
+function findParentWithFourDivs(el) {
+  let currentNode = el;
+  while (currentNode) {
+    if (currentNode.childElementCount === 4) {
+      let divNodes = currentNode.childNodes;
+      let numDivs = 0;
+      let firstDivClass = null;
+      for (let i = 0; i < divNodes.length; i++) {
+        if (divNodes[i].tagName === 'DIV') {
+          numDivs++;
+          if (numDivs === 1) {
+            firstDivClass = divNodes[i].className;
+          } else if (numDivs > 1 && divNodes[i].hasAttributes()) {
+            break;
+          }
+        }
+      }
+      if (numDivs === 4 && firstDivClass === '' && !divNodes[1].hasAttributes()) {
+        return currentNode;
+      }
+    }
+    currentNode = currentNode.parentNode;
+  }
+  return null; // if no suitable parent is found
 }
 
 setTimeout(function() {

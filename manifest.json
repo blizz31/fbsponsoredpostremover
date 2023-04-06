@@ -2,7 +2,7 @@
 
 	"manifest_version": 2,
 	"name": "Facebook Sponsored Post Remover",
-	"version": "1.1.12",
+	"version": "1.1.14",
 
 	"description": "Deletes Sponsored posts from the Facebook feed.",
 
